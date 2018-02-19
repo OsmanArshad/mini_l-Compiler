@@ -52,18 +52,19 @@ int yylex(void);
 %token <int_val> NUMBERS
 %token <op_val> IDENTIFIERS
 
-%left SUB
-%left ADD
 %left MULT
 %left DIV
 %left MOD
+%left ADD
+%left SUB
 
+%left LT
+%left LTE
+%left GT
+%left GTE
 %left EQ
 %left NEQ
-%left LT
-%left GT
-%left LTE
-%left GTE
+%left AND OR
 
 %right NOT
 %right ASSIGN
@@ -76,49 +77,50 @@ int yylex(void);
 Program:	functions	{cout << "Program -> functions " << endl;}
 		;
 
-functions: 	/*	Epsilon*/	{cout<<"functions -> epsilon" << endl;	}
-		|	function functions {cout<< "functions-> function functions"<<endl;}
+functions: 	/*Epsilon*/			{cout << "functions -> epsilon" << endl;}
+		|	function functions	{cout << "functions -> function functions"<< endl;}
 		;
 
 function:	FUNCTION IDENTIFIERS SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_PARAMS BEGIN_BODY statements END_BODY
-
-declarations: 	{cout<<"declarations->epsilon"<<endl;}
-		|	declarations SEMICOLON declarations{cout<<"declarations->declaration SEMICOLON declarations"<<endl;}
 		;
 
-declaration:	id COLON assign{cout<<"id COLON assign"<<endl;}
+declarations:	/*Epsilon*/	{cout << "declarations -> epsilon" << endl;}
+		|		declaration SEMICOLON declarations	{cout << "declaration -> declaration SEMICOLON declarations" << endl;}
 		;
 
-id:		IDENTIFIERS {cout<<"id->IDENT"<<*($1)<<endl;} 
-		|IDENTIFIERS COMMA id {cout<< "id->IDENT "<<*($1)<<" COMA id "<<endl;}
+declaration:	id COLON assign	{cout << "id COLON assign" << endl;}
 		;
 
-assign:		INTEGER{cout<<"assign->INTEGER"<<endl;}
-		|ARRAY L_SQUARE_BRACKET NUMBERS R_SQUARE_BRACKET OF INTEGER{cout<<"assign-> ARRAY l_SQUARE_BRACKET "<<$3<<"R_SQUARE_BRACKET OF INTEGER"<<endl;}
-		;
-statements: 	statement SEMICOLON{cout<<"statements->statment"<<endl;}
-		|statement SEMICOLON statements{cout<<"statement->statments SEMICOLON statements"<<;}
+id:		IDENTIFIERS	{cout << "id -> IDENT" << *($1) << endl;} 
+	|	IDENTIFIERS COMMA id {cout << "id -> IDENT " << *($1) << " COMMA id " << endl;}
 		;
 
-statement:	first{cout << "statement->first"<<endl;}
-		|second{cout<<"statement->second"<<endl;}
-		|third{cout<<"statement->third"<<endl;}
-		|fourth{cout<<"statement->fourth"<<endl;}
-		|fifthP{cout<<"statement->fifth"<<endl;}
-		|sixth{cout<<"statement-sixth"<<endl;}
-		|seventh{cout<<"statement->seventh"<<endl;}
-		|eighth{cout<<"statement->eight"<<endl;}
-		|ninth{cout<<"statement->ninth"<<endl;}
+assign:		INTEGER	{cout << "assign -> INTEGER" << endl;}
+		|	ARRAY L_SQUARE_BRACKET NUMBERS R_SQUARE_BRACKET OF INTEGER	{cout << "assign-> ARRAY l_SQUARE_BRACKET" << $3 << " R_SQUARE_BRACKET OF INTEGER" << endl;}
+		;
+statements: 	statement SEMICOLON	{cout << "statements -> statement" << endl;}
+		|		statement SEMICOLON statements	{cout << "statement -> statments SEMICOLON statements" <<;}
+		;
+
+statement:	var			{cout << "statement -> var" << endl;}
+		|	if			{cout << "statement -> if" << endl;}
+		|	while		{cout << "statement -> while" << endl;}
+		|	do			{cout << "statement -> do" << endl;}
+		|	foreach		{cout << "statement -> foreach" << endl;}
+		|	read		{cout << "statement -> read" << endl;}
+		|	write		{cout << "statement -> write" << endl;}
+		|	continue	{cout << "statement -> continue" << endl;}
+		|	return		{cout << "statement -> return" << endl;}
 		;
 	
-first:		var ASSIGN expression{cout<<"first->var ASSIGN expression"<<endl;} 
+var:	var ASSIGN expression{cout<<"first->var ASSIGN expression"<<endl;} 
 		;
 
-second:		IF boolExpr THEN statements ENDIF{cout<<"second->IF boolExpr THEN statements ENDIF"<<endl;}
-		|IF boolExpr THEN statements ELSE statements ENDIF{cout<<"IF boolExpr THEN statements ELSE statements ENDIF"<<endl;}
+if:		IF boolExpr THEN statements ENDIF	{cout << "if -> IF boolExpr THEN statements ENDIF"<<endl;}
+	|	IF boolExpr THEN statements ELSE statements ENDIF	{cout<<"IF boolExpr THEN statements ELSE statements ENDIF"<<endl;}
 		;
 
-third:		WHILE boolExpr BEGINLOOP statements ENDLOOP{cout<<"third->WHILE boolExpr BEGINLOOP statements ENDLOOP"<<endl;}
+while:		WHILE boolExpr BEGINLOOP statements ENDLOOP{cout<<"third->WHILE boolExpr BEGINLOOP statements ENDLOOP"<<endl;}
 		;
 
 fourth:		DO BEGINLOOP statements ENDLOOP WHILE boolExpr{cout<<"fourth->DO BEGINLOOP statements ENDLOOP WHILE boolExpr"<<endl;}
