@@ -1,6 +1,10 @@
 %{
-#include "heading.h"
-int yyerror(char *s);
+#include <stdio.h>
+#include <stdlib.h>
+void yyerror(const char *s);
+extern int currLine;
+extern int currPos;
+FILE * yyin;
 int yylex(void);
 %}
 
@@ -9,6 +13,7 @@ int yylex(void);
   string*	op_val;
 }
 
+%error-verbose
 %start	programStart 
 
 %token FUNCTION
@@ -71,7 +76,7 @@ int yylex(void);
 
 %%
 
-Program:	functions	{cout << "Program -> functions " << endl;}
+programStart:	functions	{cout << "Program -> functions " << endl;}
 		;
 
 functions: 	/*Epsilon*/			{cout << "functions -> epsilon" << endl;}
@@ -147,7 +152,7 @@ boolExpr:	relationAndExpr	{cout << "boolExpr -> relationAndExpr" << endl;}
 		;
 		
 relationAndExpr:	relationExpr	{cout << "relationAndExpr -> relationExpr" << endl;}
-				|	relationExp AND relationExp	{cout << "relationAndExpr -> relationExpr AND relationExpr" << endl;}
+				|	relationAndExpr AND relationExpr	{cout << "relationAndExpr -> relationExpr AND relationExpr" << endl;}
 		;
 
 relationExpr:	relationStatement	{cout << "relationExp -> relationStatement" << endl;}
@@ -172,8 +177,8 @@ expression:	multiplicativeExpr addSubExpr	{cout << "expression -> multiplicative
 	;
 
 addSubExpr:	/*Epsilon*/	{cout << "addSubExpr -> Epsilon" << endl;}
-			|	ADD multiplicativeExpr operationExpr {cout << "addSubExpr -> ADD multiplicativeExpr operationExpr" << endl;}
-			|	SUB multiplicativeExpr operationExpr {cout << "addSubExpr -> SUB multiplicativeExpr operationExpr" << endl;}
+			|	ADD multiplicativeExpr addSubExpr {cout << "addSubExpr -> ADD multiplicativeExpr addSubExpr" << endl;}
+			|	SUB multiplicativeExpr addSubExpr {cout << "addSubExpr -> SUB multiplicativeExpr addSubExpr" << endl;}
 	;
 
 multiplicativeExpr:	term multiplicativeTerm {cout << "multiplicativeExpr -> term multiplicativeTerm" << endl;}
