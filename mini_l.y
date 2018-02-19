@@ -69,9 +69,6 @@ int yylex(void);
 %right NOT
 %right ASSIGN
 
-
-
-
 %%
 
 Program:	functions	{cout << "Program -> functions " << endl;}
@@ -96,13 +93,13 @@ id:		IDENTIFIERS	{cout << "id -> IDENT" << *($1) << endl;}
 		;
 
 assign:		INTEGER	{cout << "assign -> INTEGER" << endl;}
-		|	ARRAY L_SQUARE_BRACKET NUMBERS R_SQUARE_BRACKET OF INTEGER	{cout << "assign-> ARRAY l_SQUARE_BRACKET" << $3 << " R_SQUARE_BRACKET OF INTEGER" << endl;}
+		|	ARRAY L_SQUARE_BRACKET NUMBERS R_SQUARE_BRACKET OF INTEGER	{cout << "assign-> ARRAY L_SQUARE_BRACKET" << $3 << " R_SQUARE_BRACKET OF INTEGER" << endl;}
 		;
 statements: 	statement SEMICOLON	{cout << "statements -> statement" << endl;}
 		|		statement SEMICOLON statements	{cout << "statement -> statments SEMICOLON statements" <<;}
 		;
 
-statement:	var			{cout << "statement -> var" << endl;}
+statement:	variable	{cout << "statement -> variable" << endl;}
 		|	if			{cout << "statement -> if" << endl;}
 		|	while		{cout << "statement -> while" << endl;}
 		|	do			{cout << "statement -> do" << endl;}
@@ -113,67 +110,101 @@ statement:	var			{cout << "statement -> var" << endl;}
 		|	return		{cout << "statement -> return" << endl;}
 		;
 	
-var:	var ASSIGN expression{cout<<"first->var ASSIGN expression"<<endl;} 
-		;
+variable:	var ASSIGN expression	{cout << "variable -> var ASSIGN expression" << endl;} 
+			;
 
-if:		IF boolExpr THEN statements ENDIF	{cout << "if -> IF boolExpr THEN statements ENDIF"<<endl;}
-	|	IF boolExpr THEN statements ELSE statements ENDIF	{cout<<"IF boolExpr THEN statements ELSE statements ENDIF"<<endl;}
-		;
+if:			IF boolExpr THEN statements ENDIF	{cout << "if -> IF boolExpr THEN statements ENDIF" << endl;}
+		|	IF boolExpr THEN statements ELSE statements ENDIF	{cout << "IF boolExpr THEN statements ELSE statements ENDIF" << endl;}
+			;
 
-while:		WHILE boolExpr BEGINLOOP statements ENDLOOP{cout<<"third->WHILE boolExpr BEGINLOOP statements ENDLOOP"<<endl;}
-		;
+while:		WHILE boolExpr BEGINLOOP statements ENDLOOP	{cout << "while -> WHILE boolExpr BEGINLOOP statements ENDLOOP" << endl;}
+			;
 
-fourth:		DO BEGINLOOP statements ENDLOOP WHILE boolExpr{cout<<"fourth->DO BEGINLOOP statements ENDLOOP WHILE boolExpr"<<endl;}
-		;
+do:			DO BEGINLOOP statements ENDLOOP WHILE boolExpr	{cout << "do -> DO BEGINLOOP statements ENDLOOP WHILE boolExpr" << endl;}
+			;
 
-fifth:		FOREACH IDENTIFIER IN IDENTIFIER BEGINLOOP statements ENDLOOP{cout<<"fifth->FOREACH IDENTIFIER IN IDENTIFIER BEGINLOOP statements ENDLOOP"<<endl;}
-		;
+foreach:	FOREACH IDENTIFIERS IN IDENTIFIERS BEGINLOOP statements ENDLOOP	{cout << "foreach -> FOREACH IDENTIFIERS IN IDENTIFIERS BEGINLOOP statements ENDLOOP" << endl;}
+			;
 
-sixth:		READ var commas{cout<<"READ var commas"<<endl;}
-		;
+read:		READ var commas	{cout << "read -> READ var commas" << endl;}
+			;
 
-commas:		{cout<<"commas->epsilon"<<endl;}
-		|COMMA var commas{cout<<"commas->COMMA var commas"<<endl;}
-		;
+commas:		/*Epsilon*/			{cout << "commas -> epsilon" << endl;}
+		|	COMMA var commas	{cout <<" commas -> COMMA var commas" << endl;}
+			;
 
-seventh:	WRITE var commas{cout<<"seventh->WRITE var commas"<<endl;}
-		;
+write:		WRITE var commas	{cout << "write -> WRITE var commas" << endl;}
+			;
 
-eighth:		CONTINUE{cout<<"eighth->CONTINUE"<<endl;}
-		;
+continue:	CONTINUE	{cout << "continue -> CONTINUE" << endl;}
+			;
 
-ninth:		RETURN expression{cout<<"ninth->RETURN expression"<<endl;}
-		;
+return:		RETURN expression	{cout << "return -> RETURN expression" << endl;}
+			;
 
-boolExpr:	relAndExpr{cout<<"boolExpr->relationExpr"<<endl;}
-		|relAndExpr OR relAndExpr{cout<<""<<endl;}
+boolExpr:	relationAndExpr	{cout << "boolExpr -> relationAndExpr" << endl;}
+		|	relationAndExpr OR relationAndExpr	{cout << "boolExpr -> relationAndExpr OR relationAndExpr" << endl;}
 		;
 		
-relAndExpr:	relationExp{cout<<"relAndExpr->relationExpr"<<endl;}
-		|relationExp AND relationExp{cout<<"relAndExpr->relationExp AND relationExp"<<endl;}
+relationAndExpr:	relationExpr	{cout << "relationAndExpr -> relationExpr" << endl;}
+				|	relationExp AND relationExp	{cout << "relationAndExpr -> relationExpr AND relationExpr" << endl;}
 		;
 
-relationExp:	reExpr{cout<<"relationExp->reExpr"<<endl;}
-		|NOT reExpr{cout<<"relationExp-> NOT reExpr"<<endl;}
+relationExpr:	relationStatement	{cout << "relationExp -> relationStatement" << endl;}
+		|	NOT relationStatement	{cout << "relationExp -> NOT relationStatement" << endl;}
 		;
 
-reExpr:		expression comp expression{cout<<"reExpr->expression comp expression"<<endl;}
-		|TRUE{cout<<"reExpr-> TRUE"<<endl;}
-		|FALSE{cout<<"reExpr->FALSE"<<endl;}
-		|L_PAREN boolExpr R_PAREN{cout<<"reExpr->L_PAREN boolExpr R_PAREN"<<endl;}
+relationStatement:	expression comp expression	{cout << "relationStatement -> expression comp expression" << endl;}
+		|			TRUE	{cout << "relationStatement -> TRUE" << endl;}
+		|			FALSE	{cout << "relationStatement -> FALSE" << endl;}
+		|			L_PAREN boolExpr R_PAREN	{cout << "relationStatement -> L_PAREN boolExpr R_PAREN" << endl;}
 		;
 
-comp:		EQ{cout<<"comp->EQ"<<endl;}
-		|NEQ{cout<<"comp->NEQ"<<endl;}
-		|LT{cout<<"comp->LT"<<endl;}
-		|GT{cout<<"comp->GT"<<endl;}
-		|LTE{cout<<"comp->LTE"<<endl;}
-		|GTE{cout<<"comp->GTE"<<endl;}
+comp:	EQ	{cout << "comp -> EQ" << endl;}
+	|	NEQ	{cout << "comp -> NEQ" << endl;}
+	|	LT	{cout << "comp -> LT" << endl;}
+	|	GT	{cout << "comp -> GT" << endl;}
+	|	LTE	{cout << "comp -> LTE" << endl;}
+	|	GTE	{cout << "comp -> GTE" << endl;}
+	;
+
+expression:	multiplicativeExpr addSubExpr	{cout << "expression -> multiplicativeExpr addSubExpr" << endl;}
+	;
+
+addSubExpr:	/*Epsilon*/	{cout << "addSubExpr -> Epsilon" << endl;}
+			|	ADD multiplicativeExpr operationExpr {cout << "addSubExpr -> ADD multiplicativeExpr operationExpr" << endl;}
+			|	SUB multiplicativeExpr operationExpr {cout << "addSubExpr -> SUB multiplicativeExpr operationExpr" << endl;}
+	;
+
+multiplicativeExpr:	term multiplicativeTerm {cout << "multiplicativeExpr -> term multiplicativeTerm" << endl;}
+	;
+
+multiplicativeTerm: /*Epsilon*/	{cout << "multiplicativeTerm -> epsilon" << endl;}
+				|	MULT term multiplicativeTerm {cout << "multiplicativeTerm -> MULT term multiplicativeTerm" << endl;}
+				|	DIV term multiplicativeTerm {cout << "multiplicativeTerm -> DIV term multiplicativeTerm" << endl;}
+				|	MOD term multiplicativeTerm {cout << "multiplicativeTerm -> MOD term multiplicativeTerm" << endl;}
+	;
+
+term:	positiveTerm 	{cout << "term -> positiveTerm" << endl;}
+	|	SUB positiveTerm	{cout << "term -> SUB positiveTerm" << endl;}
+	|	IDENTIFIERS termType {cout<< "term -> IDENT " << *($1) << " termType " <<endl;}
+	;
+
+positiveTerm:	var 	{cout << "positiveTerm -> var" << endl;}
+			|	NUMBERS	{cout << "positiveTerm -> NUMBER "<< $1 << endl;}
+			|	L_PAREN expression R_PAREN {cout << "positiveTerm -> L_PAREN expression R_PAREN" << endl;}
+			;
+
+termType:	L_PAREN termExpr R_PAREN {cout << "termType -> L_PAREN termExpr R_PAREN" << endl;}
+		|	L_PAREN R_PAREN	{cout << "termType -> L_PAREN R_PAREN" << endl;}
 		;
 
-
-
-
+termExpr:	expression {cout << "termExpr -> expression" << endl;}
+		|	expression COMMA termExpr {cout << "termExpr -> expression COMMA termExpr" << endl;}
+		;
+var:	IDENTIFIERS	{cout << "var -> IDENT " << *($1) << endl;}
+	|	IDENTIFIERS L_SQUARE_BRACKET expression R_SQUARE_BRACKET {cout << "var -> " << *($1) << " L_SQUARE_BRACKET expression R_SQUARE_BRACKET" << endl;}
+	;
 %%
 
 int yyerror(string s)
